@@ -5,21 +5,42 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const usuario = require("./Models/usuario");
 const csrf = require("csurf");
+const MongoStore = require("connect-mongo");
+const clientDB = require("./database/date");
+const MongoSanitize = require("express-mongo-sanitize");
+const cors = require("cors");
 
 require("dotenv").config();
-require("./database/date");
 
 const app = express();
 
+const cortOption = {
+  Credentials: true,
+  origin: process.env.PATHHEROKU || "*",
+  methods: ["GET", "POST"],
+};
+app.use(cors());
+
+app.set("trust proxy", 1);
 app.use(
   session({
-    secret: "secretString",
+    secret: process.env.SECRETSESSION,
     resave: false,
     saveUninitialized: false,
     name: "secret-name-trebal",
+    store: MongoStore.create({
+      clientPromise: clientDB,
+      dbName: process.env.DBNAME,
+    }),
+    cookie: {
+      secure: process.env.MODE === "production",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    },
   })
 );
+
 app.use(flash());
+app.use(MongoSanitize());
 
 app.use(passport.initialize());
 app.use(passport.session());
