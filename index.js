@@ -1,7 +1,36 @@
 const express = require("express");
 const { create } = require("express-handlebars");
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport");
+const usuario = require("./Models/usuario");
+const csrf = require("csurf");
+
+require("dotenv").config();
+require("./database/date");
 
 const app = express();
+
+app.use(
+  session({
+    secret: "secretString",
+    resave: false,
+    saveUninitialized: false,
+    name: "secret-name-trebal",
+  })
+);
+app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser((user, done) =>
+  done(null, { id: user._id, userName: user.userName })
+); //req.user
+passport.deserializeUser(async (user, done) => {
+  //es necesario revisar la base de dato¿?
+  const userDB = await usuario.findById(user.id);
+  return done(null, { id: userDB._id, userName: userDB.userName });
+});
 
 const hbs = create({
   extname: ".hbs",
@@ -12,10 +41,21 @@ app.engine(".hbs", hbs.engine);
 app.set("view engine", ".hbs");
 app.set("views", "./views");
 
+app.use(express.static(__dirname + "/public"));
+app.use(express.urlencoded({ extended: true }));
+
+app.use(csrf());
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.mensajes = req.flash("mensajes");
+  next();
+});
+
 app.use("/", require("./routes/home"));
 app.use("/login", require("./routes/login"));
-app.use(express.static(__dirname + "/public"));
+app.use("/register", require("./routes/login"));
 
-app.listen(5000, () => {
-  console.log("servidor andando");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log("servidor andando" + PORT);
 });

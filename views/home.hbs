@@ -1,5 +1,7 @@
-  <h1>Hola desde Home</h1>
+  <h1>Agregue sus URL</h1>
 
-  {{#each urls }}
-    {{> cards}}
+  {{> Form}}
+
+  {{#each urls item=this }}
+    {{> Cards}}
   {{/each}}

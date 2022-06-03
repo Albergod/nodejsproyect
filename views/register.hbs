@@ -1,0 +1,37 @@
+<h1>Registro de Usuarios</h1>
+<div class="row justify-content-end">
+    <div class="col-md-6">
+
+    <form action="/login/register" method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input 
+      type="text" 
+      name="userName" 
+      class="form-control mb-2" 
+      placeholder="ingrese nombre" 
+      value="Trebal17">
+
+      <input type="text" 
+      name="email" 
+      class="form-control mb-2" 
+      placeholder="ingrese un email" 
+      value="Trebal17@thanks.com">
+
+      <input 
+      type="password" 
+      name="password" 
+      class="form-control mb-2" 
+      placeholder="ingrese una contraseña"
+      value="1234r5">
+
+      <input 
+      type="password" 
+      name="repassword" 
+      class="form-control mb-2" 
+      placeholder="repita su contraseña"
+      value="1234r5">
+
+      <button class="btn btn-primary" type="submit">Registrar Usuario</button>
+    </form>
+    </div>
+</div>
