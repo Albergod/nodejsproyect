@@ -7,7 +7,7 @@ const usuario = require("./Models/usuario");
 const csrf = require("csurf");
 const MongoStore = require("connect-mongo");
 const clientDB = require("./database/date");
-const MongoSanitize = require("express-mongo-sanitize");
+const mongoSanitize = require("express-mongo-sanitize");
 const cors = require("cors");
 
 require("dotenv").config();
@@ -40,7 +40,7 @@ app.use(
 );
 
 app.use(flash());
-app.use(MongoSanitize());
+app.use(mongoSanitize());
 
 app.use(passport.initialize());
 app.use(passport.session());
